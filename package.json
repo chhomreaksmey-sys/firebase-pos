@@ -1,0 +1,18 @@
+{
+  "name": "flagrant-unit-remain-7ly1r",
+  "productName": "flagrant-unit-remain-7ly1r",
+  "description": "My Electron application description",
+  "keywords": [],
+  "main": "./main.js",
+  "version": "1.0.0",
+  "author": "chhom",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "firebase": "^12.12.0"
+  },
+  "devDependencies": {
+    "electron": "^41.2.1"
+  }
+}

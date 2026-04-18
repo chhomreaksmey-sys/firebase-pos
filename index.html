@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<!-- saved from url=(0099)file:///C:/Users/chhom/OneDrive/Desktop/Simple%20POS/POS%20PIN%20CAFE%20and%20FOOD%20Truck%203.html -->
+<html lang="en"><head><meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouPin Cafe &amp; Food Truck </title>
+<style>
+body{font-family:Arial;margin:0;background:#eef1fb}
+header{background:#4b3fcf;color:white;padding:14px;text-align:center;position:relative}
+header h2{margin:0}
+.lang{position:absolute;right:14px;top:10px}
+#adminLoginBox { background: #4b3fcf;text-align:left;border-bottom:2px solid #ddd; padding:10px; }
+.admin-status { color: red; }
+.container{
+display:flex;
+flex-wrap:wrap;
+}
+
+@media(max-width:900px){
+
+.menu{
+flex:100%;
+}
+
+.cart{
+flex:100%;
+border-left:none;
+border-top:2px solid #ddd;
+}
+
+.product{
+width:45%;
+}
+
+button{
+font-size:18px;
+padding:12px;
+}
+
+}
+.menu{flex:2;padding:12px}
+.cart{flex:1;background:white;padding:15px;border-left:1px solid #ddd;min-height:500px}
+.section-title{font-weight:bold;margin-top:10px}
+.product-grid{display:flex;flex-wrap:wrap}
+.product{background:white;border:1px solid #ddd;border-radius:12px;padding:14px;margin:6px;width:140px;text-align:center;cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,0.1);transition:0.2s}
+.product:hover{transform:scale(1.05);background:#f7f7ff}
+button{padding:6px 10px;margin:2px;font-size:14px;border:none;border-radius:7px;background:#4b3fcf;color:white;cursor:pointer}
+button:hover{background:#372fa6}
+.cart-item{display:flex;justify-content:space-between;margin:6px 0;align-items:center}
+.total{font-size:22px;margin-top:10px;font-weight:bold}
+input,select{padding:6px;margin:4px;border-radius:5px;border:1px solid #ccc}
+.table{width:100%;margin-top:10px;font-size:13px}
+.table td{border-bottom:1px solid #eee;padding:4px}
+.stat-box{background:white;padding:10px;margin-top:10px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.08)}
+.category-buttons button{background:#eee;color:#333}
+.category-buttons button.active{background:#4b3fcf;color:white}
+.cart-item button{background:red;padding:2px 6px;border-radius:4px;}
+.cart-item button:hover{background:#a00;}
+</style>
+</head>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<body>
+<header>
+   <div id="adminLoginBox" class="stat-box"style="display:flex;align-items:left;justify-content:left;margin-bottom:10px;">
+  <input id="adminUser" placeholder="Username">
+  <input id="adminPass" type="password" placeholder="Password">
+  <button type="button" onclick="adminLogin()">Login</button>
+  <span id="adminStatus" class="admin-status"></span>
+
+<h2>☕ YouPin Cafe &amp; Food Truck</h2>
+<div class="lang">
+<button onclick="setLang('en')">EN</button>
+<button onclick="setLang('kh')">KH</button>
+<button onclick="adminLogout()">Logout</button>
+</div>
+</div></header>
+<div class="container">
+<div class="menu">
+<div class="section-title">Menu</div>
+<div class="category-buttons">
+<button onclick="filterCategory('all')" class="active" id="btn_all">All</button>
+<button onclick="filterCategory('drink')" id="btn_drink">Drinks</button>
+<button onclick="filterCategory('food')" id="btn_food">Food</button>
+<button onclick="filterCategory('Addon')" id="btn_Addon">Addon</button>
+</div>
+<div class="product-grid" id="menu"><div class="product"><b>Cafe with Milk</b><br>៛3000</div><div class="product"><b>Black Cafe</b><br>៛3000</div><div class="product"><b>Milk Tea</b><br>៛4000</div><div class="product"><b>Lemon Tea</b><br>៛3000</div><div class="product"><b>Water</b><br>៛1000</div><div class="product"><b>Macha latte</b><br>៛5000</div><div class="product"><b>Passion with Milk</b><br>៛5000</div><div class="product"><b>Passion Cream</b><br>៛4000</div><div class="product"><b>Coca Cola</b><br>៛3000</div><div class="product"><b>Sting</b><br>៛3000</div><div class="product"><b>Sichuan Soup</b><br>៛10000</div><div class="product"><b>Sichuan Soup with Noodle</b><br>៛12000</div><div class="product"><b>Fried noodle</b><br>៛6000</div><div class="product"><b>Fried Rice</b><br>៛6000</div><div class="product"><b>Meat ball</b><br>៛1000</div><div class="product"><b>Duck blood</b><br>៛1000</div><div class="product"><b>Dark Chicken</b><br>៛1000</div><div class="product"><b>Beef</b><br>៛1000</div><div class="product"><b>Passion Soda</b><br>៛4000</div></div>
+
+<div class="stat-box">
+<div class="section-title">Add Product</div>
+<input id="en" placeholder="Name English">
+<input id="kh" placeholder="Name Khmer">
+<input id="price" type="number" step="0.1" placeholder="Price">
+<label for="cat">Category</label>
+<select id="cat">
+<option value="drink">Drink</option>
+<option value="food">Food</option>
+<option value="Addon">Addon</option>
+</select>
+<button onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="stat-box">
+<div class="section-title">Edit Product</div>
+<label for="editIndex">Select Product to Edit</label>
+<select id="editIndex"><option value="0">Cafe with Milk</option><option value="1">Black Cafe</option><option value="2">Milk Tea</option><option value="3">Lemon Tea</option><option value="4">Water</option><option value="5">Macha latte</option><option value="6">Passion with Milk</option><option value="7">Passion Cream</option><option value="8">Coca Cola</option><option value="9">Sting</option><option value="10">Sichuan Soup</option><option value="11">Sichuan Soup with Noodle</option><option value="12">Fried noodle</option><option value="13">Fried Rice</option><option value="14">Meat ball</option><option value="15">Duck blood</option><option value="16">Dark Chicken</option><option value="17">Beef</	option><Option value="18">Passion Soda</Option></select>
+<input id="editPrice" type="number" step="0.1" placeholder="New Price">
+<button onclick="updatePrice()">Update Price</button>
+<button onclick="deleteProduct()">Delete</button>
+</div>
+</div>
+
+<div class="cart">
+<div class="stat-box">
+<div class="section-title">Customer Name</div>
+<input type="text" id="customerName" placeholder="Enter customer name">
+</div>
+
+<div class="section-title" id="orderText">Order</div>
+<div id="cart"></div>
+<div class="total" id="total">Total: ៛0</div>
+<button onclick="checkout()">Save Sale</button>
+<button onclick="printReceipt()">Print Receipt</button>
+<button onclick="clearCart()">Clear</button>
+<button onclick="closeDay()">Close Day</button>
+
+<div class="stat-box">
+<div class="section-title">Sales Today</div>
+<table class="table" id="report"><tr><td>Date</td><td>Customer</td><td>Items</td> <td>Total</td></tr><tr><td>3/13/2026, 11:13:43 PM</td><td>Walk-in</td><td>Black Cafe x1, Passion Cream x1, Passion with Milk x1</td><td>៛12000</td></tr><tr><td>3/13/2026, 11:32:09 PM</td><td>Walk-in</td><td>Passion Soda x1</td><td>៛4000</td></tr></table>
+<div class="stat-box">
+  <div class="section-title">Daily Dashboard</div>
+  <div id="dashboard">
+💰 Revenue: <br>
+📦 Orders: <br>
+
+</div>
+</div>
+</div>
+
+<div class="stat-box">
+<div class="section-title">Statistics</div>
+<div id="stats">Sales: <br>Total Revenue: </div>
+</div>
+</div>
+</div>
+
+<script>
+let lang='kh';
+let currentCategory='all';
+let products = JSON.parse(localStorage.getItem("products")) || [
+{name_en:'Cafe with Milk',name_kh:'កាហ្វេទឹកដោះគោ',price:3000,cat:'drink'},
+{name_en:'Black Cafe',name_kh:'កាហ្វេខ្មៅ',price:3000,cat:'drink'},
+{name_en:'Milk Tea',name_kh:'តែទឹកដោះគោ',price:4000,cat:'drink'},
+{name_en:'Lemon Tea',name_kh:'តែក្រូចឆ្មារ',price:3000,cat:'drink'},
+{name_en:'Water',name_kh:'ទឹកសុទ្ធ',price:1000,cat:'drink'},
+{name_en:'Macha latte',name_kh:'ម៉ាចឆា ឡាតេ',price:5000,cat:'drink'},
+{name_en:'Passion with Milk',name_kh:'ផាសិន ទឹកដោះគោ',price:5000,cat:'drink'},
+{name_en:'Passion Cream',name_kh:'ផាសិន គ្រីម',price:4000,cat:'drink'},
+{name_en:'Coca Cola',name_kh:'កូកា​ កូឡា',price:3000,cat:'drink'},
+{name_en:'Sting',name_kh:'ស្ទីង',price:3000,cat:'drink'},
+{name_en:'Sichuan Soup',name_kh:'ស៊ុបស៊ីឈ័ន',price:10000,cat:'food'},
+{name_en:'Sichuan Soup with Noodle',name_kh:'មីស៊ុបស៊ីឈ័ន',price:12000,cat:'food'},
+{name_en:'Fried noodle',name_kh:'មីឆា',price:6000,cat:'food'},
+{name_en:'Fried Chicken with hot basil',name_kh:'ឆាក្តៅកង្កែបមាន់',price:10000,cat:'food'},
+{name_en:'Fried Frog with hot basil',name_kh:'ឆាក្តៅកង្កែប',price:10000,cat:'food'},
+{name_en:'Fried Rice',name_kh:'បាយឆា',price:6000,cat:'food'},
+{name_en:'Meat ball',name_kh:'ប្រហិត',price:1000,cat:'Addon'},
+{name_en:'Duck blood',name_kh:'ឈាមទា',price:1000,cat:'Addon'},
+{name_en:'Dark Chicken',name_kh:'មាន់ខ្មៅ',price:1000,cat:'Addon'},
+{name_en:'Beef',name_kh:'សាច់គោ',price:1000,cat:'Addon'},
+{name_en:'Rice',name_kh:'បាយស',price:1000,cat:'Addon'},
+];
+
+function updateDashboard(){
+
+let totalRevenue = 0;
+let totalOrders = sales.length;
+
+let itemCount = {};
+
+sales.forEach(s => {
+
+  totalRevenue += s.total;
+
+  if(s.items){
+
+    let items = s.items.split(",");
+
+    items.forEach(i=>{
+
+      let parts = i.trim().split(" x");
+      let name = parts[0];
+      let qty = parseInt(parts[1]) || 1;
+
+      if(!itemCount[name]){
+        itemCount[name] = 0;
+      }
+
+      itemCount[name] += qty;
+
+    });
+
+  }
+
+});
+
+/* FIND BEST ITEM */
+
+let bestItem = "-";
+let bestQty = 0;
+
+for(let item in itemCount){
+
+  if(itemCount[item] > bestQty){
+
+    bestQty = itemCount[item];
+    bestItem = item;
+
+  }
+
+}
+
+/* UPDATE DASHBOARD */
+
+document.getElementById("dashboard").innerHTML = `
+💰 Revenue: ៛${totalRevenue}<br>
+📦 Orders: ${totalOrders}<br>
+🔥 Best Item: ${bestItem} (${bestQty})
+`;
+
+}
+function increaseQty(i){
+  cart[i].qty++;
+  renderCart();
+}
+
+function decreaseQty(i){
+  cart[i].qty--;
+  if(cart[i].qty<=0){
+    cart.splice(i,1);
+  }
+  renderCart();
+}
+
+let cart=[];
+let sales=JSON.parse(localStorage.getItem('sales')||'[]');
+
+function renderMenu(){
+  let m=document.getElementById('menu'); m.innerHTML='';
+  products.forEach((p,i)=>{
+    if(currentCategory!=='all' && p.cat!==currentCategory) return;
+    let name=lang==='en'?p.name_en:p.name_kh;
+    let div=document.createElement('div');
+    div.className='product';
+    div.innerHTML=`<b>${name}</b><br>៛${p.price}`;
+    div.onclick=()=>addItem(i);
+    m.appendChild(div);
+  });
+  updateEditList();
+}
+
+function filterCategory(cat){
+  currentCategory=cat;
+  document.querySelectorAll('.category-buttons button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn_'+cat).classList.add('active');
+  renderMenu();
+}
+
+function printReceipt(){
+
+let customer = document.getElementById('customerName').value || "Walk-in";
+
+let receipt = `
+PinCafe & Food Truck
+-----------------------
+Customer: ${customer}
+
+`;
+
+
+
+let total = 0;
+
+cart.forEach(p=>{
+let name = lang==='en'?p.name_en:p.name_kh;
+receipt += `${name} x${p.qty}  ${p.price*p.qty}\n`;
+total += p.price*p.qty;
+});
+
+receipt += `
+-----------------------
+Total: ${total} riel
+Thank You ☕
+`;
+
+let win = window.open('', '', 'width=300,height=500');
+win.document.write("<pre>"+receipt+"</pre>");
+win.print();
+}
+
+function addItem(i){
+  let product = products[i];
+  let cartItem = cart.find(p => p.name_en === product.name_en);
+  if(cartItem){ cartItem.qty += 1; }
+  else { cart.push({...product, qty:1}); }
+  renderCart();
+}
+
+function renderCart(){
+  let c=document.getElementById('cart');
+  c.innerHTML='';
+  let total=0;
+
+  cart.forEach((p,idx)=>{
+    let name=lang==='en'?p.name_en:p.name_kh;
+
+    let div=document.createElement('div');
+    div.className='cart-item';
+
+    div.innerHTML=`
+      ${name}
+      <div>
+        <button onclick="decreaseQty(${idx})">➖</button>
+        ${p.qty}
+        <button onclick="increaseQty(${idx})">➕</button>
+      </div>
+      <span>៛${p.price*p.qty}</span>
+      <button onclick="removeItem(${idx})">❌</button>
+    `;
+
+    c.appendChild(div);
+    total+=p.price*p.qty;
+  });
+
+  document.getElementById('total').innerText=`Total: ៛${total}`;
+}
+
+function removeItem(idx){ cart.splice(idx,1); renderCart(); }
+function clearCart(){ cart=[]; renderCart(); }
+
+function checkout(){
+  if (window.saveOrderToFirestore) {
+  saveOrderToFirestore({
+    customer,
+    items,
+    total,
+    date: new Date().toISOString()
+  });
+}
+
+if(cart.length===0){
+alert("Cart is empty!");
+return;
+}
+
+let customer = document.getElementById('customerName').value || "Walk-in";
+
+let total = 0;
+
+let items = cart.map(p=>{
+let name = lang==='en'?p.name_en:p.name_kh;
+total += p.price * p.qty;
+return name + " x" + p.qty;
+}).join(", ");
+
+sales.push({
+date:new Date().toLocaleString(),
+customer:customer,
+items:items,
+total:total
+});
+
+localStorage.setItem("sales", JSON.stringify(sales));
+
+renderReportAndStats();
+clearCart();
+
+document.getElementById('customerName').value = "";
+
+}
+function renderReportAndStats(){
+  updateReport();
+  updateStats();
+  updateDashboard();
+}
+
+function closeDay(){
+
+if(sales.length===0){
+alert("No sales today");
+return;
+}
+
+let today = new Date().toISOString().slice(0,10);
+
+let totalRevenue = 0;
+let itemSales = {};
+
+/* ORDER SHEET */
+
+let orders = [
+["YouPin Cafe & Food Truck"],
+["Daily Sales Report / របាយការណ៍លក់ប្រចាំថ្ងៃ"],
+["Date / កាលបរិច្ឆេទ", today],
+[],
+["Date","Time","Customer / អតិថិជន","Items / មុខម្ហូប","Total (៛)"]
+];
+
+sales.forEach(s=>{
+
+let d = new Date(s.date);
+
+let date = d.toLocaleDateString();
+let time = d.toLocaleTimeString();
+
+totalRevenue += s.total;
+
+orders.push([
+date,
+time,
+s.customer,
+s.items,
+s.total
+]);
+
+let items = s.items.split(",");
+
+items.forEach(i=>{
+
+let parts = i.trim().split(" x");
+
+let name = parts[0];
+let qty = parseInt(parts[1]) || 1;
+
+if(!itemSales[name]) itemSales[name]=0;
+
+itemSales[name]+=qty;
+
+});
+
+});
+
+/* PRODUCT SALES */
+
+let productsSheet = [
+["Product / មុខម្ហូប","Quantity Sold / ចំនួនលក់"]
+];
+
+for(let item in itemSales){
+
+productsSheet.push([item,itemSales[item]]);
+
+}
+
+/* SUMMARY */
+
+let summary = [
+["SUMMARY / សង្ខេប"],
+[],
+["Total Orders / ចំនួនការកម្មង់", sales.length],
+["Total Revenue / ចំណូលសរុប", totalRevenue + " ៛"]
+];
+
+/* CREATE EXCEL */
+
+let wb = XLSX.utils.book_new();
+
+let wsOrders = XLSX.utils.aoa_to_sheet(orders);
+let wsProducts = XLSX.utils.aoa_to_sheet(productsSheet);
+let wsSummary = XLSX.utils.aoa_to_sheet(summary);
+
+/* AUTO COLUMN WIDTH */
+
+wsOrders["!cols"] = [
+{wch:12},
+{wch:10},
+{wch:20},
+{wch:35},
+{wch:12}
+];
+
+wsProducts["!cols"] = [
+{wch:30},
+{wch:15}
+];
+
+wsSummary["!cols"] = [
+{wch:30},
+{wch:20}
+];
+
+/* ADD SHEETS */
+
+XLSX.utils.book_append_sheet(wb, wsOrders, "Orders");
+XLSX.utils.book_append_sheet(wb, wsProducts, "Product Sales");
+XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
+
+/* DOWNLOAD FILE */
+
+XLSX.writeFile(wb, "YouPin_Cafe_Report_"+today+".xlsx");
+
+/* RESET DAY */
+
+sales=[];
+localStorage.setItem("sales","[]");
+
+renderReportAndStats();
+
+alert("Excel report downloaded successfully");
+
+}
+
+function updateReport(){
+  
+  let table=document.getElementById('report'); 
+  table.innerHTML='';
+  let header = document.createElement('tr');
+  header.innerHTML = '<td>Date</td><td>Customer</td><td>Items</td><td>Total</td>';
+  table.appendChild(header);
+  sales.forEach(s=>{
+    let row=document.createElement('tr');
+    row.innerHTML=`<td>${s.date}</td><td>${s.customer}</td><td>${s.items}</td><td>៛${s.total}</td>`;
+    table.appendChild(row);
+
+});
+
+}
+
+function updateStats(){
+  let total=0; sales.forEach(s=>total+=s.total);
+  document.getElementById('stats').innerHTML=`Sales: ${sales.length}<br>Total Revenue: ៛${total}`;
+}
+
+function addProduct(){
+
+let en=document.getElementById('en').value;
+let kh=document.getElementById('kh').value;
+let price=parseFloat(document.getElementById('price').value);
+let cat=document.getElementById('cat').value;
+
+if(!en || !price) return;
+
+products.push({
+name_en:en,
+name_kh:kh,
+price:price,
+cat:cat
+});
+
+localStorage.setItem("products", JSON.stringify(products));
+
+renderMenu();
+updateEditList();
+
+}
+
+function updateEditList(){
+  let select=document.getElementById('editIndex'); select.innerHTML='';
+  products.forEach((p,i)=>{ let opt=document.createElement('option'); opt.value=i; opt.text=p.name_kh;text=p.name_en; select.appendChild(opt); });
+}
+
+function updatePrice(){
+
+let i=document.getElementById('editIndex').value;
+let price=parseFloat(document.getElementById('editPrice').value);
+
+if(!price) return;
+
+products[i].price = price;
+
+localStorage.setItem("products", JSON.stringify(products));
+
+renderMenu();
+
+}
+
+function setLang(l){ lang=l; renderMenu(); renderCart(); }
+
+renderMenu(); updateStats(); updateReport();
+updateDashboard();
+
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "admin"; // change to your secure password
+let isAdmin = false;
+
+function adminLogin() {
+    let user = document.getElementById("adminUser").value;
+    let pass = document.getElementById("adminPass").value;
+
+    if(user === ADMIN_USERNAME && pass === ADMIN_PASSWORD){
+        isAdmin = true;
+        document.getElementById("adminStatus").innerText = "✅ Admin Logged In";
+        
+        // Hide the login box
+        document.getElementById("adminLoginBox").style.display = "flex";
+    document.getElementById("adminUser").value = "";
+    document.getElementById("adminPass").value = "";
+
+        alert("Welcome Admin!");
+
+    } else {
+        isAdmin = false;
+        document.getElementById("adminStatus").innerText = "❌ Wrong credentials";
+        alert("Invalid Admin Login!");
+    }
+}
+
+function checkAdmin(){
+    if(!isAdmin){
+        alert("⚠️ Only Admin can perform this action!");
+        return false;
+    }
+    return true;
+}
+
+function adminLogout() {
+    isAdmin = false;
+    document.getElementById("adminStatus").innerText = "";
+    alert("Admin logged out!");
+}
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    where
+  } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDndmJbjR-PBBBlsxhX2hTGDptdQfDdgGE",
+    authDomain: "pincafefoodtruck.firebaseapp.com",
+    databaseURL: "https://pincafefoodtruck-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "pincafefoodtruck",
+    storageBucket: "pincafefoodtruck.firebasestorage.app",
+    messagingSenderId: "829970490792",
+    appId: "1:829970490792:web:887aeb2b6a63fc69ad699d",
+    measurementId: "G-SYQXPLLNT2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function saveOrderToFirestore(order) {
+    try {
+      await addDoc(collection(db, "orders"), order);
+      console.log("Order saved to Firestore:", order);
+    } catch (err) {
+      console.error("Firestore save failed:", err);
+    }
+  }
+
+  window.saveOrderToFirestore = saveOrderToFirestore;
+  window.getOrdersFromFirestore = async function () {
+    const q = query(collection(db, "orders"), where("status", "==", "paid"));
+    const snapshot = await getDocs(q);
+    snapshot.forEach((doc) => console.log(doc.id, doc.data()));
+  };
+</script>
+</body>
+
+</html>
